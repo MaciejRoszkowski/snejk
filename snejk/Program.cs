@@ -25,6 +25,7 @@ namespace snejk
 
     class Program
     {
+        static int selection = 0;
         static char[,] grid = new char[20,50];
         static int width = 50;
         static int height = 20;
@@ -32,6 +33,8 @@ namespace snejk
         static int snake_x = 25;
         static int snake_y = 9;
         static List<Pos> snake = new List<Pos>();
+        static int time = 200;
+
         enum direction
         {
             UP=1,
@@ -46,9 +49,15 @@ namespace snejk
         static int target_x;
         static int target_y;
         static int score = 0;
+        static bool gameStart = false;
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            //gameover = false;
+            //snake = new List<Pos>();
+            //snake_y = 9;
+            //snake_x = 25;
+            Menu();
             InitFrame();
             DrawFrame();
             InitSnake();
@@ -83,10 +92,77 @@ namespace snejk
 
             Console.SetCursorPosition(0, 20);
             Console.WriteLine("game over");
-        }
+            while(true)
+            {
+                ConsoleKeyInfo s;
+                s =Console.ReadKey();
+                if(s.Key == ConsoleKey.Escape)
+                {
+                    break;
+                }
 
+            }
+            //Main(args);
+        
+        }
+        static void Menu()
+        {
+            Console.WriteLine("||========================================================||");
+            Console.WriteLine("||--------------------------------------------------------||");
+            Console.WriteLine("||---------------- Welcome to Snake Game -----------------||");
+            Console.WriteLine("||--------------------------------------------------------||");
+            Console.WriteLine("||========================================================||");
+
+            while(!gameStart)
+            {
+                ConsoleKeyInfo s;
+                s = Console.ReadKey();
+                if (s.Key == ConsoleKey.DownArrow)
+                {
+                    if(selection<4)
+                    selection++;
+                }
+                if (s.Key == ConsoleKey.UpArrow)
+                {
+                    if (selection >0)
+                        selection--;
+                }
+                if (s.Key==ConsoleKey.Enter)
+                {
+                    switch (selection)
+                    {
+                        case 0:
+                            gameStart = true;
+                            break;
+                        case 1:
+                            Console.Clear();
+                            Console.WriteLine("ja najlepszy");
+                            Console.ReadKey();
+                            Console.Clear();
+
+
+                            break;
+                        case 2:
+                            time /= 2;
+                            break;
+                        case 3:
+                            Environment.Exit(0);
+                            break;
+
+                    }
+
+                    
+                }
+
+            }
+            //0 graj se 
+            //1 ranking
+            //2 poziom trudnosci
+            //3 wyjdz
+        }
         static void InitFrame()
         {
+            Console.Clear();
             Console.CursorVisible = false;
             grid[0, 0] = '╔';
             grid[0, width - 1] = '╗';
@@ -191,7 +267,7 @@ namespace snejk
         }
         static void Pause()
         {
-            System.Threading.Thread.Sleep(100);
+            System.Threading.Thread.Sleep(time);
         }
         static bool IsGameover()
         {
