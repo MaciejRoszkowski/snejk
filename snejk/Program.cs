@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Media;
 
 namespace snejk
 {
-    //TODO:
-    // menu
-    // ranking
-    //muzyczka
-    //bomby czy inne gowno
-    //poziom trudnosci
+
+
     class Pos
     {
         public int X { get; set; }
@@ -34,6 +31,8 @@ namespace snejk
         static int snake_y = 9;
         static List<Pos> snake = new List<Pos>();
         static int time = 200;
+        static int multi = 1;
+        static SoundPlayer player = new SoundPlayer();
 
         enum direction
         {
@@ -57,6 +56,8 @@ namespace snejk
             //snake = new List<Pos>();
             //snake_y = 9;
             //snake_x = 25;
+            Console.WindowHeight = height+5;
+            Console.WindowWidth = width+2;
             Menu();
             InitFrame();
             DrawFrame();
@@ -67,6 +68,8 @@ namespace snejk
 
 
 
+
+
             while(!gameover)
             {
                 DrawSnakeHead();
@@ -74,8 +77,11 @@ namespace snejk
                 {
                     SetTarget();
                     snakeLength++;
-                    score++;
+
+                    score +=  multi;
                     UpdateScore();
+
+                    Console.Beep();
 
                 }
                 Pause();
@@ -90,9 +96,15 @@ namespace snejk
             }
             DrawSnakeHead();
 
-            Console.SetCursorPosition(0, 20);
+            Console.SetCursorPosition(40, 20);
             Console.WriteLine("game over");
-            while(true)
+            //player.SoundLocation = @"c:\sound\box.wav";
+            player.SoundLocation = @"c:\sound\crash.wav";
+
+            player.Play();
+
+
+            while (true)
             {
                 ConsoleKeyInfo s;
                 s =Console.ReadKey();
@@ -105,27 +117,111 @@ namespace snejk
             //Main(args);
         
         }
+        static void DrawMenu()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.CursorVisible = false;
+
+            Console.WriteLine("╔══════════════════════════════════════════════════╗");
+            Console.WriteLine("║--------------------------------------------------║");
+            Console.WriteLine("║--------------------- Snake ----------------------║");
+            Console.WriteLine("║--------------------------------------------------║");
+            Console.WriteLine("╚══════════════════════════════════════════════════╝");
+            Console.WriteLine("odpal gierke");
+            Console.WriteLine("ranking");
+            Console.WriteLine("hard mode");
+            Console.WriteLine("wyjdz");
+
+
+        }
+        static void UpdateMenu(int prev)
+        {
+            if(selection==0)
+            {
+                Console.SetCursorPosition(0, 5);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("odpal gierke");
+            }
+            else if (selection == 1)
+            {
+                Console.SetCursorPosition(0, 6);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("ranking");
+            }
+            else if (selection == 2)
+            {
+                Console.SetCursorPosition(0, 7);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("hard mode");
+            }
+            else if (selection == 3)
+            {
+                Console.SetCursorPosition(0, 8);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("wyjdz");
+            }
+            if(prev==0)
+            {
+                Console.SetCursorPosition(0, 5);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("odpal gierke");
+            }
+            else if (prev == 1)
+            {
+                Console.SetCursorPosition(0, 6);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("ranking");
+            }
+            else if (prev == 2)
+            {
+                Console.SetCursorPosition(0, 7);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("hard mode");
+            }
+            else if (prev == 3)
+            {
+                Console.SetCursorPosition(0, 8);
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("wyjdz");
+
+            }
+        }
+
         static void Menu()
         {
-            Console.WriteLine("||========================================================||");
-            Console.WriteLine("||--------------------------------------------------------||");
-            Console.WriteLine("||---------------- Welcome to Snake Game -----------------||");
-            Console.WriteLine("||--------------------------------------------------------||");
-            Console.WriteLine("||========================================================||");
-
+            DrawMenu();
+            UpdateMenu(-1);
+            int prev = -1;
             while(!gameStart)
             {
                 ConsoleKeyInfo s;
                 s = Console.ReadKey();
                 if (s.Key == ConsoleKey.DownArrow)
                 {
-                    if(selection<4)
-                    selection++;
+                    Console.SetCursorPosition(10, 8);
+
+                    if (selection<3)
+                    {
+                        prev = selection;
+                        selection++;
+                        UpdateMenu(prev);
+                        Console.SetCursorPosition(10, 8);
+
+                    }
+
                 }
                 if (s.Key == ConsoleKey.UpArrow)
                 {
+                    Console.SetCursorPosition(10, 8);
+
                     if (selection >0)
+                    {
+                        prev = selection;
                         selection--;
+                        UpdateMenu(prev);
+                        Console.SetCursorPosition(10, 8);
+
+                    }
                 }
                 if (s.Key==ConsoleKey.Enter)
                 {
@@ -135,15 +231,14 @@ namespace snejk
                             gameStart = true;
                             break;
                         case 1:
-                            Console.Clear();
-                            Console.WriteLine("ja najlepszy");
-                            Console.ReadKey();
-                            Console.Clear();
-
+                            Ranking(prev);
 
                             break;
                         case 2:
-                            time /= 2;
+                            time =50;
+                            multi = 100;
+                            gameStart = true;
+
                             break;
                         case 3:
                             Environment.Exit(0);
@@ -151,14 +246,27 @@ namespace snejk
 
                     }
 
-                    
                 }
 
             }
-            //0 graj se 
-            //1 ranking
-            //2 poziom trudnosci
-            //3 wyjdz
+
+        }
+        static void Ranking(int prev)
+        {
+            Console.Clear();
+            Console.WriteLine("╔══════════════════════════════════════════════════╗");
+            Console.WriteLine("║--------------------------------------------------║");
+            Console.WriteLine("║-------------------- Ranking  --------------------║");
+            Console.WriteLine("║--------------------------------------------------║");
+            Console.WriteLine("╚══════════════════════════════════════════════════╝");
+
+            Console.WriteLine("   1. ja         10000");
+            Console.WriteLine("   2. nie ja     5000 ");
+            Console.WriteLine("   3. karol      -1 ");
+            Console.ReadKey();
+            Console.Clear();
+            DrawMenu();
+            UpdateMenu(prev);
         }
         static void InitFrame()
         {
@@ -191,6 +299,7 @@ namespace snejk
         static void DrawFrame()
         {
             Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
             for (int i = 0; i < height; i++)
             {
                 for (int j = 0; j < width; j++)
@@ -291,6 +400,11 @@ namespace snejk
 
             if(Console.KeyAvailable)
             {
+                player.SoundLocation = @"c:\sound\move.wav";
+                //player.Play();
+                //player.SoundLocation = @"c:\sound\a.wav";
+                player.Play();
+
                 s = Console.ReadKey();
                 switch(s.Key)
                 {
@@ -363,14 +477,14 @@ namespace snejk
         static void InitScore()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.SetCursorPosition(51, 0);
+            Console.SetCursorPosition(0, 20);
             Console.Write("Score : 0");
         }
 
         static void UpdateScore()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.SetCursorPosition(59, 0);
+            Console.SetCursorPosition(8, 20);
             Console.Write(score);
         }
     }
